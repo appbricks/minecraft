@@ -43,10 +43,10 @@ else
   mc_ver=$mc_server_version
 fi
 
-src_dir=${root_dir}/src/${mc_build_type}
-if [[ -e ${src_dir}/build-properties ]]; then
-  source ${src_dir}/build-properties
-  [[ ! -e ${src_dir}/server.properties ]] || mc_svr_props_path=${src_dir}/server.properties
+config_dir=${root_dir}/config/${mc_build_type}
+if [[ -e ${config_dir}/build-properties ]]; then
+  source ${config_dir}/build-properties
+  [[ ! -e ${config_dir}/server.properties ]] || mc_svr_props_path=${config_dir}/server.properties
 
   # download server resources (i.e. maps etc)  
   download_dir=${root_dir}/.downloads/${mc_build_type}
