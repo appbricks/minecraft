@@ -2,8 +2,10 @@
 
 root_dir=$(cd $(dirname $BASH_SOURCE)/.. && pwd)
 
-cookbook_dir=${root_dir}/.build/cookbook
-cookbook_bin_dir=${cookbook_dir}/bin
+cookbook_build_dir=${root_dir}/.build/cookbook
+cookbook_bin_dir=${cookbook_build_dir}/bin
+
+[[ $1 != *:clean:* ]] || rm -fr $cookbook_build_dir
 mkdir -p $cookbook_bin_dir
 
 build_cookbook=${cookbook_bin_dir}/build-cookbook.sh
