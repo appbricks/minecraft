@@ -26,7 +26,7 @@ variable "name" {
 variable "minecraft_type" {
   description = "Type of Minecraft server distribution - i.e. 'vanilla' is the original untouched distribution."
   type        = string
-  default     = "release"
+  default     = "vanilla"
 }
 
 # Minecraft Server description
@@ -106,8 +106,32 @@ variable "java_mx_mem" {
 }
 
 #
+# MyCS app registration keys
+#
+
+variable "mycs_cloud_public_key_id" {
+  default = "NA"
+}
+
+variable "mycs_cloud_public_key" {
+  default = "NA"
+}
+
+variable "mycs_app_private_key" {
+  default = "NA"
+}
+
+variable "mycs_app_id_key" {
+  default = "NA"
+}
+
+#
 # Inputs from MySpace node
 #
+
+variable "cb_root_ca_cert" {
+  type = string
+}
 
 variable "cb_vpc_id" {
   type = string
@@ -119,13 +143,18 @@ variable "cb_vpc_name" {
 
 variable "cb_deployment_networks" {
   type = list(string)
+
+  validation {
+    condition     = length(var.cb_deployment_networks) > 0
+    error_message = "No deployment networks found in space. Make sure the space being deployed to has at least one admin network."
+  }
 }
 
 variable "cb_deployment_security_group" {
   type = string
 }
 
-variable "cb_default_openssh_private_key" {
+variable "cb_default_ssh_private_key" {
   type = string
 }
 

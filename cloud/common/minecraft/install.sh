@@ -133,7 +133,8 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:${mc_root}
 CRON
 
 # CRON job to shutdown when no players are connected
-mv /tmp/idle_shutdown.sh ${mc_root}
+chmod +x ./idle_shutdown.sh
+mv ./idle_shutdown.sh ${mc_root}
 cat << ---EOF >> /etc/cron.d/minecraft_inactivity_action
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
@@ -141,7 +142,8 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 ---EOF
 
 # Script to update local DNS
-mv /tmp/update_dns.sh ${mc_root}
+chmod +x ./update_dns.sh
+mv ./update_dns.sh ${mc_root}
 
 cat <<SYSTEMD > /etc/systemd/system/update-dns.service
 [Unit]
@@ -166,4 +168,4 @@ SYSTEMD
 /usr/bin/systemctl start minecraft
 
 # Clean up
-rm /tmp/install.sh
+rm ./install.sh

@@ -2,6 +2,8 @@
 
 root_dir=$(cd $(dirname $BASH_SOURCE)/.. && pwd)
 
+cookbook_version=${VERSION:-0.0.0}
+
 cookbook_build_dir=${root_dir}/.build/cookbook
 cookbook_bin_dir=${cookbook_build_dir}/bin
 
@@ -17,4 +19,14 @@ if [[ ! -e $build_cookbook ]]; then
   chmod +x $build_cookbook
 fi
 
-$build_cookbook -r ${root_dir}/cloud/recipes -d "" -b dev -s -v
+cookbook_desc="This cookbook contains recipes to launch self-hosted minecraft servers."
+
+$build_cookbook \
+  --recipe ${root_dir}/cloud/recipes \
+  --cookbook-name minecraft \
+  --cookbook-desc "$cookbook_desc" \
+  --cookbook-version $cookbook_version \
+  --dest-dir "" \
+  --template-only \
+  --single \
+  --verbose

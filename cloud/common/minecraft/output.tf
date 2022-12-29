@@ -34,12 +34,14 @@ output "cb_managed_instances" {
       "name": "minecraft"
       "description": local.minecraft_node_description
       "fqdn": local.server_fqdn
-      "public_ip": aws_instance.minecraft.public_ip
+      "public_ip": ""
       "private_ip": aws_instance.minecraft.private_ip
+      "health_check_port": ""
+      "health_check_type": ""
       "api_port": ""
       "ssh_port": "22"
       "ssh_user": "ubuntu"
-      "ssh_key": var.cb_default_openssh_private_key
+      "ssh_key": var.cb_default_ssh_private_key
       "root_user": ""
       "root_passwd": ""
       "non_root_user": ""
