@@ -1,0 +1,123 @@
+name: MyCS Minecraft Cookbook
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+    - 'cloud/**'
+
+jobs:
+  create-release-tag:
+    runs-on: ubuntu-latest
+    outputs: 
+      version: ${{steps.release-tag.outputs.version}}
+
+    defaults:
+      run:
+        shell: bash
+    
+    env:
+      VERSION: '0.0'
+    
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Create and tag release
+    - name: Create release tag
+      id: release-tag
+      run: |
+        git config user.email "$(git log -1 --pretty=format:'%an')"
+        git config user.name "$(git log -1 --pretty=format:'%ae')"
+        git fetch --tags origin
+
+        set +e
+        last_tag=$(git for-each-ref \
+          --sort=-creatordate \
+          --format '%(refname)' refs/tags \
+          | grep "refs/tags/${VERSION}" \
+          | head -1)
+        set -e
+
+        build_number=$(basename "$last_tag" | cut -d '.' -f3)
+        [[ -n $build_number ]] || build_number=-1
+        release_tag=${VERSION}.$((build_number+1))
+        last_commit_msg=$(git log -1 --pretty=%B)
+
+        echo "Creating release tag ${release_tag}..."
+        git tag -a ${release_tag} -m "$last_commit_msg"
+        git push --follow-tags
+
+        echo "name=${release_tag}" >> $GITHUB_OUTPUT
+
+  build-cookbook:
+    needs: create-release-tag
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    env:
+      VERSION: ${{ needs.create-release-tag.outputs.version }}
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ needs.create-release-tag.outputs.version }}
+
+    - name: Run build
+      run: |
+        scripts/build-cookbook.sh "$VERSION"
+
+    - name: Upload built cookbook
+      uses: actions/upload-artifact@master
+      with:
+        name: cookbook-build-artifacts
+        path: .build/cookbook/dist/*.zip
+
+  publish-release:
+    needs: 
+    - build-cookbook
+    - create-release-tag
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+    
+    env:
+      VERSION: '0.0'
+    
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ needs.create-release-tag.outputs.version }}
+
+    - name: Download built cookbook
+      uses: actions/download-artifact@master
+      with:
+        name: cookbook-build-artifacts
+        path: .
+
+    - name: Show build files
+      run: |
+        ls -al
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ needs.create-release-tag.outputs.version }}
+        prerelease: false
+        files: |
+          *.zip
+          LICENSE
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_REPOSITORY: appbricks/minecraft
