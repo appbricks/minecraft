@@ -116,8 +116,8 @@ download_minecraft_server() {
 ubuntu_linux_setup
 
 # Create mc dir, sync S3 to it and download mc if not already there (from S3)
-/bin/mkdir -p ${mc_root}
-/usr/bin/aws s3 sync s3://${mc_bucket} ${mc_root}
+/bin/mkdir -p ${mc_root}/logs
+/usr/bin/aws s3 sync s3://${mc_bucket} ${mc_root}/worlds
 
 # Download server if it doesn't exist on S3 already (existing from previous install)
 # To force a new server version, remove the server JAR from S3 bucket
@@ -142,7 +142,7 @@ fi
 /bin/cat <<CRON > /etc/cron.d/minecraft
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:${mc_root}
-*/${mc_backup_freq} * * * *  $SSH_USER  /usr/bin/aws s3 sync ${mc_root} s3://${mc_bucket}
+*/${mc_backup_freq} * * * *  $SSH_USER  /usr/bin/aws s3 sync ${mc_root}/worlds s3://${mc_bucket}
 CRON
 
 # CRON job to shutdown when no players are connected

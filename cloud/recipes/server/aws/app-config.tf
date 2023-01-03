@@ -68,6 +68,8 @@ data "template_file" "minecraft-idle-shutdown" {
 
   vars = {
     mc_root = local.minecraft_root
+    mc_type = var.minecraft_type
+    mc_port = var.minecraft_port
   }
 }
 

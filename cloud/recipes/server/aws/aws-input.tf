@@ -19,9 +19,4 @@
 variable "minecraft_instance_type" {
   description = "The AWS EC2 instance type of the Minecraft server."
   default = "t4g.medium"
-
-  validation {
-    condition     = var.minecraft_type != "bedrock" || startswith(var.minecraft_instance_type, "t3a.")
-    error_message = "Bedrock minecraft server is supported only on x86 t3a.* instance types."
-  }
 }

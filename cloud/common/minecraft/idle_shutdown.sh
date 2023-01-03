@@ -2,7 +2,25 @@
 
 set -e
 
-num_connected_clients=$(mcstatus localhost status | awk '/players:/{ split($2,n,"/"); print n[1] }')
+if [[ "${mc_type}" != "bedrock" ]]; then
+  GET_CONNECTED_USERS=$(cat <<EOF
+from mcstatus import JavaServer
+server = JavaServer.lookup("localhost:${mc_port}")
+status = server.status()
+print(status.players.online)
+EOF
+)
+else
+  GET_CONNECTED_USERS=$(cat <<EOF
+from mcstatus import BedrockServer
+server = BedrockServer.lookup("localhost:19132")
+status = server.status()
+print(status.players_online)
+EOF
+)
+fi
+
+num_connected_clients=$(python3 -c "$GET_CONNECTED_USERS")
 
 shutdown_counter=${mc_root}/logs/shutdown_countdown
 counter=$([[ -e $shutdown_counter ]] && cat $shutdown_counter || echo 10)
