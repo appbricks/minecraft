@@ -20,11 +20,11 @@ variable "name" {
 #
 # @order: 2
 # @tags: recipe,target-undeployed
-# @accepted_values: vanilla,paper,witchcraft-and-wizardry
-# @accepted_values_message: Please provide one of 'vanilla', 'paper' or 'witchcraft-and-wizardry'.
+# @accepted_values: bedrock,vanilla,paper,witchcraft-and-wizardry
+# @accepted_values_message: Please provide one of 'bedrock', 'vanilla', 'paper' or 'witchcraft-and-wizardry'.
 #
 variable "minecraft_type" {
-  description = "Type of Minecraft server distribution - i.e. 'vanilla' is the original untouched distribution."
+  description = "Type of Minecraft server distribution - i.e. 'vanilla' is the original untouched Java distribution."
   type        = string
   default     = "vanilla"
 }

@@ -52,17 +52,16 @@ resource "aws_iam_instance_profile" "minecraft" {
 # Ubuntu AMI
 #
 
+locals {
+  ami_arch = startswith(var.minecraft_instance_type, "t4g.") ? "arm64" : "amd64"
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-arm64-server-*"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["arm64"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-${local.ami_arch}-server-*"]
   }
 
   filter {

@@ -13,10 +13,15 @@
 #
 # @order: 20
 # @tags: recipe,target-undeployed,target-deployed
-# @accepted_values: t4g.nano,t4g.micro,t4g.small,t4g.medium,t4g.large,t4g.xlarge,t4g.2xlarge
-# @accepted_values_message: Not a valid AWS general purpose ARM t4g.* instance type
+# @accepted_values: t4g.nano,t4g.micro,t4g.small,t4g.medium,t4g.large,t4g.xlarge,t4g.2xlarge,t3a.nano,t3a.micro,t3a.small,t3a.medium,t3a.large,t3a.xlarge,t3a.2xlarge
+# @accepted_values_message: Not a valid AWS general purpose AMD t4a.* or ARM t4g.* instance type
 #
 variable "minecraft_instance_type" {
   description = "The AWS EC2 instance type of the Minecraft server."
   default = "t4g.medium"
+
+  validation {
+    condition     = var.minecraft_type != "bedrock" || startswith(var.minecraft_instance_type, "t3a.")
+    error_message = "Bedrock minecraft server is supported only on x86 t3a.* instance types."
+  }
 }

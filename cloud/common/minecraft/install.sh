@@ -6,6 +6,9 @@ set -ex
 
 MINECRAFT_JAR="minecraft_server.jar"
 
+BEDROCK_SERVER="bedrock_server"
+BEDROCK_VERSION="1.19.51.01"
+
 # Update OS and install start script
 ubuntu_linux_setup() {
   export SSH_USER="ubuntu"
@@ -32,6 +35,13 @@ APT::Periodic::AutocleanInterval "7";
 APT::Periodic::Unattended-Upgrade "1";
 __UPG__
 
+
+  if [[ "${mc_type}" == "bedrock" ]]; then
+    exec_start="${mc_root}/$BEDROCK_SERVER"
+  else
+    exec_start="/usr/bin/java -Xmx${java_mx_mem} -Xms${java_ms_mem} -jar $MINECRAFT_JAR nogui"
+  fi
+
   cat <<SYSTEMD > /etc/systemd/system/minecraft.service
 [Unit]
 Description=Minecraft Server
@@ -40,8 +50,9 @@ After=network.target
 [Service]
 Type=simple
 User=$SSH_USER
+Environment=LD_LIBRARY_PATH=${mc_root}
 WorkingDirectory=${mc_root}
-ExecStart=/usr/bin/java -Xmx${java_mx_mem} -Xms${java_ms_mem} -jar $MINECRAFT_JAR nogui
+ExecStart=$exec_start
 Restart=on-abort
 
 [Install]
@@ -71,6 +82,8 @@ download_minecraft_server() {
       MC_VERSION=$(jq -r '.["latest"]["release"]' ${mc_root}/version_manifest.json)
     fi
     DOWNLOAD_URL=https://appbricks-public-downloads.s3.amazonaws.com/minecraft/releases/${mc_type}_$MC_VERSION.zip
+  elif [[ "${mc_type}" == "bedrock" ]]; then
+    DOWNLOAD_URL=https://minecraft.azureedge.net/bin-linux/bedrock-server-$BEDROCK_VERSION.zip
   else
     DOWNLOAD_URL=https://appbricks-public-downloads.s3.amazonaws.com/minecraft/releases/${mc_type}.zip
   fi
@@ -108,7 +121,7 @@ ubuntu_linux_setup
 
 # Download server if it doesn't exist on S3 already (existing from previous install)
 # To force a new server version, remove the server JAR from S3 bucket
-if [[ ! -e "${mc_root}/$MINECRAFT_JAR" ]]; then
+if [[ ! -e "${mc_root}/$MINECRAFT_JAR" && ! -e "${mc_root}/$BEDROCK_SERVER" ]]; then
   download_minecraft_server
 fi
 
