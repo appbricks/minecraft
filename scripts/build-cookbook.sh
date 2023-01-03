@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/bash -ex
 
 root_dir=$(cd $(dirname $BASH_SOURCE)/.. && pwd)
 
