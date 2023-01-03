@@ -2,7 +2,7 @@
 
 root_dir=$(cd $(dirname $BASH_SOURCE)/.. && pwd)
 
-cookbook_version=${VERSION:-0.0.0}
+cookbook_version=${VERSION:-dev}
 
 cookbook_build_dir=${root_dir}/.build/cookbook
 cookbook_bin_dir=${cookbook_build_dir}/bin
@@ -21,12 +21,32 @@ fi
 
 cookbook_desc="This cookbook contains recipes to launch self-hosted minecraft servers."
 
-$build_cookbook \
-  --recipe ${root_dir}/cloud/recipes \
-  --cookbook-name minecraft \
-  --cookbook-desc "$cookbook_desc" \
-  --cookbook-version $cookbook_version \
-  --dest-dir "" \
-  --template-only \
-  --single \
-  --verbose
+if [[ $cookbook_version == dev ]]; then
+  $build_cookbook \
+    --recipe ${root_dir}/cloud/recipes \
+    --cookbook-name minecraft \
+    --cookbook-desc "$cookbook_desc" \
+    --cookbook-version $cookbook_version \
+    --dest-dir "" \
+    --template-only \
+    --single \
+    --verbose
+else
+  for os_name in darwin linux windows; do
+    for os_arch in amd64 arm64; do
+      # build for all os architectures except for for windows/arm64
+      if [[ $os_name != windows || $os_arch == amd64 ]]; then
+        $build_cookbook \
+          --recipe ${root_dir}/cloud/recipes \
+          --cookbook-name minecraft \
+          --cookbook-desc "$cookbook_desc" \
+          --cookbook-version $cookbook_version \
+          --dest-dir "" \
+          --template-only \
+          --single \
+          --os-name $os_name --os-arch $os_arch \
+          --verbose
+      fi
+    done
+  done
+fi
