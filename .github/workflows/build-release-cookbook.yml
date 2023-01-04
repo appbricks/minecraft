@@ -72,7 +72,7 @@ jobs:
 
     - name: Run build
       run: |
-        scripts/build-cookbook.sh "$VERSION"
+        scripts/build-cookbook.sh :clean:
 
     - name: Upload built cookbook
       uses: actions/upload-artifact@master
