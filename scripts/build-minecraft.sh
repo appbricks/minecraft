@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -eu
 
 root_dir=$(cd $(dirname $BASH_SOURCE)/.. && pwd)
 
@@ -75,13 +75,11 @@ fi
 # Index version_manifest.json by the version number and extract URL for the specific version manifest
 vanilla_versions_metadata_url=$(echo "$vanilla_server_manifest" | jq -r '.["versions"][] | select(.id == "'"$mc_ver"'") | .url')
 
-java -version
-
 # Validate current java version
 vanilla_server_java_version=$(curl -s $vanilla_versions_metadata_url | jq -r '.javaVersion.majorVersion')
 [[ $java_version == $vanilla_server_java_version ]] || \
   (echo "WARNING! Minecraft version ${mc_ver} requires java ${vanilla_server_java_version}, but build java version is set as ${java_version}.")
-current_java_version=$(java -version 2>&1 | awk -F'[ "]' '/java version/{ split($4,v,"."); print v[1] }')
+current_java_version=$(java -version 2>&1 | awk -F'[ "]' '/ version/{ split($4,v,"."); print v[1] }')
 [[ $current_java_version == $java_version ]] || \
   (echo "ERROR! Need Java SDK version $java_version for build."; exit 1)
 
