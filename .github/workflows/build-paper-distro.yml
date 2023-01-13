@@ -1,4 +1,4 @@
-name: MyCS Minecraft Paper Distribution and Image
+name: Build and Publish Minecraft Paper Distribution and Image
 
 on:
   workflow_dispatch:
