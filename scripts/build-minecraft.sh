@@ -1,4 +1,6 @@
-#!/bin/sh -e
+#!/bin/sh
+
+set -eu
 
 root_dir=$(cd $(dirname $BASH_SOURCE)/.. && pwd)
 
@@ -7,6 +9,10 @@ via_version=4.2.1
 
 mc_server_type=vanilla
 mc_server_version=latest
+
+mc_build_type=_NA_
+mc_svr_props_path=
+mc_svr_map_path=
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
