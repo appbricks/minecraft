@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -eux
 
 root_dir=$(cd $(dirname $BASH_SOURCE)/.. && pwd)
 
@@ -74,6 +74,8 @@ fi
 
 # Index version_manifest.json by the version number and extract URL for the specific version manifest
 vanilla_versions_metadata_url=$(echo "$vanilla_server_manifest" | jq -r '.["versions"][] | select(.id == "'"$mc_ver"'") | .url')
+
+java -version
 
 # Validate current java version
 vanilla_server_java_version=$(curl -s $vanilla_versions_metadata_url | jq -r '.javaVersion.majorVersion')
