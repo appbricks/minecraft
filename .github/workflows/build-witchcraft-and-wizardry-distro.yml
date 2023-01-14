@@ -65,4 +65,4 @@ jobs:
           mc_version=latest
         push: true
         platforms: linux/amd64,linux/arm64
-        tags: appbricks/minecraft-waw:latest
+        tags: appbricks/minecraft-witchcraft-and-wizardry:latest
