@@ -12,7 +12,7 @@ JAVA_MX_MEM=${java_mx_mem:-}
 JAVA_MS_MEM=${java_ms_mem:-}
 
 BEDROCK_SERVER="bedrock_server"
-BEDROCK_VERSION="1.19.51.01"
+BEDROCK_VERSION=${mc_version:-"1.19.51.01"}
 
 download_minecraft_server() {
   WGET=$(which wget)
