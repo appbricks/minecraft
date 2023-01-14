@@ -111,7 +111,7 @@ mc_description=\${1:-My awesome minecraft worlds in the cloud.}
   if [[ "${mc_type}" == "vanilla" || "${mc_type}" == "paper" ]]; then
     if [[ -e "${MC_ROOT}/server.properties" ]]; then
       /bin/cat >>${MC_ROOT}/run_server.sh<< ---EOT
-sed -i -E 's|motd=.*|motd=\${mc_description}|' ${MC_ROOT}/server.properties
+sed -i -E "s|motd=.*|motd=\${mc_description}|" ${MC_ROOT}/server.properties
 ---EOT
     else
       /bin/cat >>${MC_ROOT}/run_server.sh<< ---EOT
