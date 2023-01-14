@@ -1,4 +1,4 @@
-name: MyCS Minecraft Witchcraft and Wizardry Distribution and Image
+name: Build and Publish Minecraft Witchcraft-and-Wizardry Distribution and Image
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: MyCS Minecraft Distributions and Images
+name: Build and Publish Minecraft Bedrock Distribution and Image
 
 on:
   workflow_dispatch:
