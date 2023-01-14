@@ -30,12 +30,12 @@ output "cb_managed_instances" {
   value = [
     {
       "order": 0
-      "id": aws_instance.minecraft.id
+      "id": local.minecraft_private_id
       "name": "minecraft"
       "description": local.minecraft_node_description
       "fqdn": local.server_fqdn
       "public_ip": ""
-      "private_ip": aws_instance.minecraft.private_ip
+      "private_ip": local.minecraft_private_ip
       "health_check_port": ""
       "health_check_type": ""
       "api_port": ""

@@ -100,7 +100,7 @@ download_minecraft_server() {
       # And finally download it to our local MC dir
       $WGET -O ${mc_root}/$MINECRAFT_JAR $VANILLA_SERVER_URL
     else
-      echo "ERROR! Distribution package '$TYPE' not found at download URL '$DOWNLOAD_URL'"
+      echo "ERROR! Distribution package '${mc_type}' not found at download URL '$DOWNLOAD_URL'"
       exit 1
     fi
   else

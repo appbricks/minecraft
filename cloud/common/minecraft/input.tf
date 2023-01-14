@@ -79,28 +79,28 @@ variable "minecraft_backup_frequency" {
   default     = 5
 }
 
-# Minecraft JVM initial minimum heap size
+# Minecraft JVM maximum heap size
 #
 # @order: 7
 # @tags: recipe,target-undeployed
 # @value_inclusion_filter: ^[0-9]+[kmgKMG]$
 # @value_inclusion_filter_message: The heap size must be a positive integer with a suffix (k/m/g) indicating the units.
 #
-variable "java_ms_mem" {
-  description = "Java initial and minimum heap size."
+variable "java_mx_mem" {
+  description = "Java maximum heap size."
   type        = string
   default     = "2g"
 }
 
-# Minecraft JVM maximum heap size
+# Minecraft JVM initial minimum heap size
 #
 # @order: 8
 # @tags: recipe,target-undeployed
 # @value_inclusion_filter: ^[0-9]+[kmgKMG]$
 # @value_inclusion_filter_message: The heap size must be a positive integer with a suffix (k/m/g) indicating the units.
 #
-variable "java_mx_mem" {
-  description = "Java maximum heap size."
+variable "java_ms_mem" {
+  description = "Java initial and minimum heap size."
   type        = string
   default     = "2g"
 }
@@ -123,6 +123,10 @@ variable "mycs_app_private_key" {
 
 variable "mycs_app_id_key" {
   default = "NA"
+}
+
+variable "mycs_app_version" {
+  default = "dev"
 }
 
 #

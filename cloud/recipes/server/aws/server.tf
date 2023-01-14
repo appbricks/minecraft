@@ -2,6 +2,11 @@
 # Minecraft Instance
 #
 
+locals {
+  minecraft_private_id = aws_instance.minecraft.id
+  minecraft_private_ip = aws_instance.minecraft.private_ip
+}
+
 resource "aws_instance" "minecraft" {
 
   instance_type = var.minecraft_instance_type
