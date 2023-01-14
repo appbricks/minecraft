@@ -28,6 +28,9 @@ while [[ $# -gt 0 ]]; do
       mc_build_type=$2
       shift
       ;;
+    -d|--debug)
+      set -x
+      ;;
     *)
       echo -e "ERROR! Unknown option \"$1\"."
       exit 1
