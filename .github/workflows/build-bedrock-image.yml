@@ -42,4 +42,4 @@ jobs:
           mc_version=${{ inputs.version }}
         push: true
         platforms: linux/amd64,linux/arm64
-        tags: appbricks/minecraft-paper:latest,appbricks/minecraft-paper:${{ inputs.version }}
+        tags: appbricks/minecraft-bedrock:latest,appbricks/minecraft-bedrock:${{ inputs.version }}
