@@ -96,7 +96,7 @@ fi
 
 if [[ "${mc_type}" == "bedrock" ]]; then
 
-  /bin/cat ?>${MC_ROOT}/run_server.sh<< ---EOT
+  /bin/cat >>${MC_ROOT}/run_server.sh<< ---EOT
 LD_LIBRARY_PATH=${MC_ROOT} \
   ${MC_ROOT}/${BEDROCK_SERVER}
 ---EOT
