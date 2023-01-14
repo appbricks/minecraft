@@ -104,7 +104,7 @@ LD_LIBRARY_PATH=${MC_ROOT} \
 else
 
   /bin/cat >>${MC_ROOT}/run_server.sh<< ---EOT
-mc_description=\${3:-My awesome minecraft worlds in the cloud.}
+mc_description=\${1:-My awesome minecraft worlds in the cloud.}
 ---EOT
 
   # set server description
@@ -122,8 +122,8 @@ echo "motd=\${mc_description}" > ${MC_ROOT}/server.properties
 
   /bin/cat >>${MC_ROOT}/run_server.sh<< ---EOT
 
-java_mx_mem=\${1:-2g}
-java_ms_mem=\${2:-2g}
+java_mx_mem=\${2:-2g}
+java_ms_mem=\${3:-2g}
 /usr/bin/java -Xmx\${java_mx_mem} -Xms\${java_ms_mem} -jar $MINECRAFT_JAR nogui
 ---EOT
 
