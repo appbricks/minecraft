@@ -7,8 +7,7 @@ locals {
 }
 
 module "app-config" {
-  # source = "github.com/appbricks/cloud-inceptor.git/modules/app-config"
-  source = "../../../../../cloud/cloud-inceptor/modules/app-config"
+  source = "github.com/appbricks/cloud-inceptor.git/modules/app-config"
 
   mycs_cloud_public_key_id = var.mycs_cloud_public_key_id
   mycs_cloud_public_key = var.mycs_cloud_public_key
@@ -29,8 +28,6 @@ module "app-config" {
       var.java_ms_mem
     ]
   )
-
-  # local_config_dir = local.mycs_app_config_dir
 
   depends_on = [
     data.external.system-env
