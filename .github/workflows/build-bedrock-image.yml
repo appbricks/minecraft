@@ -1,0 +1,45 @@
+name: MyCS Minecraft Distributions and Images
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Minecraft Bedrock server version
+        required: true
+        default: '1.19.51.01'
+        type: string
+
+jobs:
+  build-bedrock-distro:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+    - name: Build and push
+      uses: docker/build-push-action@v3
+      with:
+        build-args: |
+          mc_type=bedrock
+          mc_version=${{ inputs.version }}
+        push: true
+        platforms: linux/amd64,linux/arm64
+        tags: appbricks/minecraft-paper:latest,appbricks/minecraft-paper:${{ inputs.version }}
