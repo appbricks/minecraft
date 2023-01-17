@@ -77,10 +77,22 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-    - name: Build and push
+    - name: Build and push dev image
       uses: docker/build-push-action@v3
       with:
         build-args: |
+          base_image=appbricks/mycs-node:dev
+          mc_type=vanilla
+          mc_version=${{ needs.minecraft-version.outputs.version }}
+        push: true
+        platforms: linux/amd64,linux/arm64
+        tags: appbricks/minecraft-vanilla:dev
+
+    - name: Build and push prod image
+      uses: docker/build-push-action@v3
+      with:
+        build-args: |
+          base_image=appbricks/mycs-node:latest
           mc_type=vanilla
           mc_version=${{ needs.minecraft-version.outputs.version }}
         push: true
