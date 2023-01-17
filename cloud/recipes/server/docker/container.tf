@@ -26,7 +26,10 @@ resource "docker_container" "minecraft" {
 }
 
 resource "docker_image" "minecraft" {
-  name         = "appbricks/minecraft-${var.minecraft_type}/latest"
+  name         = (var.mycs_app_version == "dev" 
+    ? "appbricks/minecraft-${var.minecraft_type}:dev"
+    : "appbricks/minecraft-${var.minecraft_type}:${var.minecraft_version}"
+  )
   keep_locally = true
 }
 
@@ -34,22 +37,3 @@ resource "random_id" "minecraft" {
   prefix      = "mc-"
   byte_length = 8
 }
-
-# # Create a docker image resource
-# # -> docker pull nginx:latest
-# resource "docker_image" "nginx" {
-#   name         = "nginx:latest"
-#   keep_locally = true
-# }
-
-# # Create a docker container resource
-# # -> same as 'docker run --name nginx -p8080:80 -d nginx:latest'
-# resource "docker_container" "nginx" {
-#   name    = "nginx"
-#   image   = docker_image.nginx.image_id
-
-#   ports {
-#     external = 8080
-#     internal = 80
-#   }
-# }
