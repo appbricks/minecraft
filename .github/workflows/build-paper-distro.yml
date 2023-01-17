@@ -50,7 +50,7 @@ jobs:
       run: |
         scripts/build-minecraft.sh --type paper --version ${{ needs.minecraft-version.outputs.version }}
 
-  build-paper-image:
+  build-dev-paper-image:
     needs: 
     - minecraft-version
     - build-paper-distro
@@ -81,6 +81,45 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         build-args: |
+          base_image=appbricks/mycs-node:dev
+          mc_type=paper
+          mc_version=${{ needs.minecraft-version.outputs.version }}
+        push: true
+        platforms: linux/amd64,linux/arm64
+        tags: appbricks/minecraft-paper:dev
+
+  build-prod-paper-image:
+    needs: 
+    - minecraft-version
+    - build-paper-distro
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+    - name: Build and push
+      uses: docker/build-push-action@v3
+      with:
+        build-args: |
+          base_image=appbricks/mycs-node:latest
           mc_type=paper
           mc_version=${{ needs.minecraft-version.outputs.version }}
         push: true
