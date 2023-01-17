@@ -18,7 +18,7 @@ module "app-config" {
 
   app_work_directory = local.minecraft_root
   app_exec_cmd = "${local.minecraft_root}/run_server.sh"
-  app_cmd_arguments = var.minecraft_type == (var.minecraft_type == "bedrock" 
+  app_cmd_arguments = (var.minecraft_type == "bedrock" 
     ? [
       var.minecraft_server_description,
     ] 
