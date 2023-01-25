@@ -29,57 +29,56 @@ data "archive_file" "minecraft-app-scripts" {
   output_path = "${path.module}/.minecraft-app-scripts.zip"
 
   source {
-    content  = "${data.template_file.minecraft-install.rendered}"
+    content  = local.minecraft_install_script
     filename = "install.sh"
   }
 
   source {
-    content  = "${data.template_file.minecraft-idle-shutdown.rendered}"
+    content  = local.minecraft_idle_shutdown_script
     filename = "idle_shutdown.sh"
   }
 
   source {
-    content  = "${data.template_file.minecraft-update-dns.rendered}"
+    content  = local.minecraft_update_dns_script
     filename = "update_dns.sh"
   }
 }
 
-data "template_file" "minecraft-install" {
-  template = file("${path.module}/install.sh")
+locals {
+  minecraft_install_script = templatefile(
+    "${path.module}/install.sh",
+    {
+      mc_description = var.minecraft_server_description
 
-  vars = {
-    mc_description = var.minecraft_server_description
+      mc_root        = local.minecraft_root
+      mc_version     = var.minecraft_version
+      mc_type        = var.minecraft_type
+      mc_port        = var.minecraft_port
+      mc_backup_freq = var.minecraft_backup_frequency
 
-    mc_root        = local.minecraft_root
-    mc_version     = var.minecraft_version
-    mc_type        = var.minecraft_type
-    mc_port        = var.minecraft_port
-    mc_backup_freq = var.minecraft_backup_frequency
+      java_mx_mem    = var.java_mx_mem
+      java_ms_mem    = var.java_ms_mem
 
-    java_mx_mem    = var.java_mx_mem
-    java_ms_mem    = var.java_ms_mem
+      mc_bucket      = aws_s3_bucket.minecraft.bucket
+    }
+  )
 
-    mc_bucket      = aws_s3_bucket.minecraft.bucket
-  }
-}
+  minecraft_idle_shutdown_script = templatefile(
+    "${path.module}/idle_shutdown.sh",
+    {
+      mc_root = local.minecraft_root
+      mc_type = var.minecraft_type
+      mc_port = var.minecraft_port
+    }
+  )
 
-data "template_file" "minecraft-idle-shutdown" {
-  template = file("${path.module}/idle_shutdown.sh")
-
-  vars = {
-    mc_root = local.minecraft_root
-    mc_type = var.minecraft_type
-    mc_port = var.minecraft_port
-  }
-}
-
-data "template_file" "minecraft-update-dns" {
-  template = file("${path.module}/update_dns.sh")
-
-  vars = {
-    mc_dns_name    = "${var.name}.${var.cb_internal_domain}"
-    dns_zone       = var.cb_internal_domain
-    pdns_url       = var.cb_internal_pdns_url
-    pdns_api_key   = var.cb_internal_pdns_api_key
-  }
+  minecraft_update_dns_script = templatefile(
+    "${path.module}/update_dns.sh",
+    {
+      mc_dns_name  = "${var.name}.${var.cb_internal_domain}"
+      dns_zone     = var.cb_internal_domain
+      pdns_url     = var.cb_internal_pdns_url
+      pdns_api_key = var.cb_internal_pdns_api_key
+    }
+  )
 }
