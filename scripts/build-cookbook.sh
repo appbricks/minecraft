@@ -32,8 +32,7 @@ if [[ $cookbook_version == dev ]]; then
     --single \
     --verbose
 else
-  set +e
-  for os_name in darwin linux windows; do
+  for os_name in linux darwin windows; do
     for os_arch in amd64 arm64; do
       # build for all os architectures except for for windows/arm64
       if [[ $os_name != windows || $os_arch == amd64 ]]; then
@@ -48,15 +47,7 @@ else
           --single \
           --os-name $os_name --os-arch $os_arch \
           --verbose
-        
-        if [[ $? != 0 ]]; then
-          set +x
-          echo -e "\n!!!! Unable to build cookbook for OS '$os_name' with architecture '$os_arch'."
-          echo -e "!!!! This could be due to missing OS specific plugins. Continuing with build.\n"
-          set -x
-        fi
       fi
     done
   done
-  set -e
 fi
