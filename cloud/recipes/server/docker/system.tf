@@ -9,7 +9,7 @@ locals {
   is_windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
 
   # script file to retrieve local system environment variables
-  env_script = local.is_windows ? "${path.root}/.terraform/tmp/env.ps1" : "${path.root}/.terraform/tmp/env.sh"
+  env_script = local.is_windows ? "${path.cwd}/.terraform/env.ps1" : "${path.cwd}/.terraform/env.sh"
 }
 
 # Script to read local system environment
