@@ -26,7 +26,7 @@ resource "docker_container" "minecraft" {
 }
 
 resource "docker_image" "minecraft" {
-  name         = (var.mycs_app_version == "dev" 
+  name = (var.mycs_app_version == "dev" 
     ? "appbricks/minecraft-${var.minecraft_type}:dev"
     : "appbricks/minecraft-${var.minecraft_type}:${var.minecraft_version}"
   )
