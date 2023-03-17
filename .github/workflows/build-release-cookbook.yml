@@ -75,7 +75,10 @@ jobs:
 
     - name: Run build
       run: |
-        aws s3 ls s3://mycsprod-deploy-artifacts/releases/
+        aws s3 ls s3://mycsprod-deploy-artifacts/releases/ | sort \
+          | awk '/mycs-node-.*.zip/{ print $4 }' \
+          | awk 'match($0, /[0-9]+\.[0-9]+\.[0-9]+/) { print substr($0, RSTART, RLENGTH) }' \
+          | uniq | tail -1
         # scripts/build-cookbook.sh :clean:
 
     # - name: Upload built cookbook
