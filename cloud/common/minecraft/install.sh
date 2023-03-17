@@ -7,7 +7,7 @@ set -ex
 MINECRAFT_JAR="minecraft_server.jar"
 
 BEDROCK_SERVER="bedrock_server"
-BEDROCK_VERSION="1.19.51.01"
+BEDROCK_VERSION="1.19.70.02"
 
 # Update OS and install start script
 ubuntu_linux_setup() {
@@ -83,7 +83,7 @@ download_minecraft_server() {
     fi
     DOWNLOAD_URL=https://appbricks-public-downloads.s3.amazonaws.com/minecraft/releases/${mc_type}_$MC_VERSION.zip
   elif [[ "${mc_type}" == "bedrock" ]]; then
-    DOWNLOAD_URL=https://minecraft.azureedge.net/bin-linux-preview/bedrock-server-$BEDROCK_VERSION.zip
+    DOWNLOAD_URL=https://minecraft.azureedge.net/bin-linux/bedrock-server-$BEDROCK_VERSION.zip
   else
     DOWNLOAD_URL=https://appbricks-public-downloads.s3.amazonaws.com/minecraft/releases/${mc_type}.zip
   fi
