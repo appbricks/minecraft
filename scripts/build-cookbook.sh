@@ -32,6 +32,11 @@ if [[ $cookbook_version == dev ]]; then
     --single \
     --verbose
 else
+  mycs_app_version=$(aws s3 ls s3://mycsprod-deploy-artifacts/releases/ | sort \
+    | awk '/mycs-node-.*.zip/{ print $4 }' \
+    | awk 'match($0, /[0-9]+\.[0-9]+\.[0-9]+/) { print substr($0, RSTART, RLENGTH) }' \
+    | uniq | tail -1)
+
   for os_name in linux darwin windows; do
     for os_arch in amd64 arm64; do
       # build for all os architectures except for for windows/arm64
@@ -45,6 +50,7 @@ else
           --dest-dir "" \
           --template-only \
           --single \
+          --env-arg "mycs_app_version=${mycs_app_version}" \
           --os-name $os_name --os-arch $os_arch \
           --verbose
       fi
