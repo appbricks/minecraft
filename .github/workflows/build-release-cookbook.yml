@@ -8,52 +8,52 @@ on:
     - 'cloud/**'
 
 jobs:
-  create-release-tag:
-    runs-on: ubuntu-latest
-    outputs: 
-      version: ${{steps.release-tag.outputs.version}}
+  # create-release-tag:
+  #   runs-on: ubuntu-latest
+  #   outputs: 
+  #     version: ${{steps.release-tag.outputs.version}}
 
-    defaults:
-      run:
-        shell: bash
+  #   defaults:
+  #     run:
+  #       shell: bash
     
-    env:
-      VERSION: '0.0'
+  #   env:
+  #     VERSION: '0.0'
     
-    steps:
+  #   steps:
 
-    - name: Checkout
-      uses: actions/checkout@v3
+  #   - name: Checkout
+  #     uses: actions/checkout@v3
 
-    # Create and tag release
-    - name: Create release tag
-      id: release-tag
-      run: |
-        git config user.email "$(git log -1 --pretty=format:'%an')"
-        git config user.name "$(git log -1 --pretty=format:'%ae')"
-        git fetch --tags origin
+  #   # Create and tag release
+  #   - name: Create release tag
+  #     id: release-tag
+  #     run: |
+  #       git config user.email "$(git log -1 --pretty=format:'%an')"
+  #       git config user.name "$(git log -1 --pretty=format:'%ae')"
+  #       git fetch --tags origin
 
-        set +e
-        last_tag=$(git for-each-ref \
-          --sort=-creatordate \
-          --format '%(refname)' refs/tags \
-          | grep "refs/tags/${VERSION}" \
-          | head -1)
-        set -e
+  #       set +e
+  #       last_tag=$(git for-each-ref \
+  #         --sort=-creatordate \
+  #         --format '%(refname)' refs/tags \
+  #         | grep "refs/tags/${VERSION}" \
+  #         | head -1)
+  #       set -e
 
-        build_number=$(basename "$last_tag" | cut -d '.' -f3)
-        [[ -n $build_number ]] || build_number=-1
-        release_tag=${VERSION}.$((build_number+1))
-        last_commit_msg=$(git log -1 --pretty=%B)
+  #       build_number=$(basename "$last_tag" | cut -d '.' -f3)
+  #       [[ -n $build_number ]] || build_number=-1
+  #       release_tag=${VERSION}.$((build_number+1))
+  #       last_commit_msg=$(git log -1 --pretty=%B)
 
-        echo "Creating release tag ${release_tag}..."
-        git tag -a ${release_tag} -m "$last_commit_msg"
-        git push --follow-tags
+  #       echo "Creating release tag ${release_tag}..."
+  #       git tag -a ${release_tag} -m "$last_commit_msg"
+  #       git push --follow-tags
 
-        echo "version=${release_tag}" >> $GITHUB_OUTPUT
+  #       echo "version=${release_tag}" >> $GITHUB_OUTPUT
 
   build-cookbook:
-    needs: create-release-tag
+    # needs: create-release-tag
     runs-on: ubuntu-latest
 
     defaults:
@@ -63,63 +63,64 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      VERSION: ${{ needs.create-release-tag.outputs.version }}
+      # VERSION: ${{ needs.create-release-tag.outputs.version }}
       
     steps:
 
     - name: Checkout
       uses: actions/checkout@v3
-      with:
-        ref: ${{ needs.create-release-tag.outputs.version }}
+      # with:
+      #   ref: ${{ needs.create-release-tag.outputs.version }}
 
     - name: Run build
       run: |
-        scripts/build-cookbook.sh :clean:
+        aws s3 ls s3://mycsprod-deploy-artifacts/releases/
+        # scripts/build-cookbook.sh :clean:
 
-    - name: Upload built cookbook
-      uses: actions/upload-artifact@master
-      with:
-        name: cookbook-build-artifacts
-        path: .build/cookbook/dist/*.zip
+    # - name: Upload built cookbook
+    #   uses: actions/upload-artifact@master
+    #   with:
+    #     name: cookbook-build-artifacts
+    #     path: .build/cookbook/dist/*.zip
 
-  publish-release:
-    needs: 
-    - build-cookbook
-    - create-release-tag
-    runs-on: ubuntu-latest
+  # publish-release:
+  #   needs: 
+  #   - build-cookbook
+  #   - create-release-tag
+  #   runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        shell: bash
+  #   defaults:
+  #     run:
+  #       shell: bash
     
-    env:
-      VERSION: '0.0'
+  #   env:
+  #     VERSION: '0.0'
     
-    steps:
+  #   steps:
 
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        ref: ${{ needs.create-release-tag.outputs.version }}
+  #   - name: Checkout
+  #     uses: actions/checkout@v3
+  #     with:
+  #       ref: ${{ needs.create-release-tag.outputs.version }}
 
-    - name: Download built cookbook
-      uses: actions/download-artifact@master
-      with:
-        name: cookbook-build-artifacts
-        path: .
+  #   - name: Download built cookbook
+  #     uses: actions/download-artifact@master
+  #     with:
+  #       name: cookbook-build-artifacts
+  #       path: .
 
-    - name: Show build files
-      run: |
-        ls -al
+  #   - name: Show build files
+  #     run: |
+  #       ls -al
 
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ needs.create-release-tag.outputs.version }}
-        prerelease: false
-        files: |
-          *.zip
-          LICENSE
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_REPOSITORY: appbricks/minecraft
+  #   - name: Create Release
+  #     uses: softprops/action-gh-release@v1
+  #     with:
+  #       tag_name: ${{ needs.create-release-tag.outputs.version }}
+  #       prerelease: false
+  #       files: |
+  #         *.zip
+  #         LICENSE
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       GITHUB_REPOSITORY: appbricks/minecraft
