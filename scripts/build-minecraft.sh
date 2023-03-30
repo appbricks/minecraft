@@ -131,6 +131,7 @@ popd 2>&1 >/dev/null
 
 if [[ -n $mc_svr_map_path ]]; then
   echo "Extracting custom map for $mc_build_type..."
+  rm -fr ${server_build}/world 
   mkdir ${server_build}/world
   pushd ${server_build}/world 2>&1 >/dev/null
   unzip $mc_svr_map_path
@@ -156,7 +157,7 @@ resource-pack-sha1=${sha1sum}
   fi
 fi
 if [[ $mc_server_type == paper ]]; then
-  mkdir ${server_build}/plugins
+  mkdir -p ${server_build}/plugins
 
   echo "Adding Geyser plugin to allow BedRock clients to connect..."
   curl -s \
