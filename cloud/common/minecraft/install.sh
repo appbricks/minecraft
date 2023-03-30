@@ -133,8 +133,10 @@ EULA
 if [[ "${mc_type}" == "vanilla" || "${mc_type}" == "paper" ]]; then
   if [[ -e "${mc_root}/server.properties" ]]; then
     sed -i -E 's|motd=.*|motd=${mc_description}|' ${mc_root}/server.properties
+    sed -i -E 's|server-port=.*|server-port=${mc_port}|' ${mc_root}/server.properties
   else
     echo "motd=${mc_description}" > ${mc_root}/server.properties
+    echo "server-port=${mc_port}" >> ${mc_root}/server.properties
   fi
 fi
 

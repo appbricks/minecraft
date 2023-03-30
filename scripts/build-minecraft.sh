@@ -65,7 +65,7 @@ if [[ -e ${config_dir}/build-properties ]]; then
   set +e
   aws s3 cp \
     s3://appbricks-public-downloads/minecraft/maps/${mc_build_type}.zip \
-    ${download_dir}//map.zip 2>&1 >/dev/null
+    ${download_dir}/map.zip 2>&1 >/dev/null
   [[ ! -e ${download_dir}/map.zip ]] || \
     mc_svr_map_path=${download_dir}/map.zip
   set -e

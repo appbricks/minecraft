@@ -62,7 +62,8 @@ download_minecraft_server() {
     cd ${MC_ROOT}
     unzip ${MC_ROOT}/minecraft_distro.zip
     if [[ -e ./world ]]; then
-    zip -r ./world.zip ./world 
+      zip -r ./world.zip ./world
+      rm -fr ./world
     fi
     cd -
   fi
@@ -105,6 +106,7 @@ else
 
   /bin/cat >>${MC_ROOT}/run_server.sh<< ---EOT
 mc_description=\${1:-My awesome minecraft worlds in the cloud.}
+mc_port=\${2:-25565}
 ---EOT
 
   # set server description
@@ -112,18 +114,20 @@ mc_description=\${1:-My awesome minecraft worlds in the cloud.}
     if [[ -e "${MC_ROOT}/server.properties" ]]; then
       /bin/cat >>${MC_ROOT}/run_server.sh<< ---EOT
 sed -i -E "s|motd=.*|motd=\${mc_description}|" ${MC_ROOT}/server.properties
+sed -i -E "s|server-port=.*|server-port=\${mc_port}|" ${MC_ROOT}/server.properties
 ---EOT
     else
       /bin/cat >>${MC_ROOT}/run_server.sh<< ---EOT
 echo "motd=\${mc_description}" > ${MC_ROOT}/server.properties
+echo "server-port=\${mc_port}" >> ${MC_ROOT}/server.properties
 ---EOT
     fi
   fi
 
   /bin/cat >>${MC_ROOT}/run_server.sh<< ---EOT
 
-java_mx_mem=\${2:-2g}
-java_ms_mem=\${3:-2g}
+java_mx_mem=\${3:-2g}
+java_ms_mem=\${4:-2g}
 /usr/bin/java -Xmx\${java_mx_mem} -Xms\${java_ms_mem} -jar $MINECRAFT_JAR nogui
 ---EOT
 

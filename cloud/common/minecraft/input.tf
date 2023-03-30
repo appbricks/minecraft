@@ -59,6 +59,7 @@ variable "minecraft_version" {
 # @tags: recipe,target-undeployed
 # @value_inclusion_filter: ^[0-9]+$
 # @value_inclusion_filter_message: The port value must be a number from 1024 to 65535.
+# @depends_on: minecraft_type=vanilla|paper|witchcraft-and-wizardry
 #
 variable "minecraft_port" {
   description = "The TCP port the Minecraft server will listen on."

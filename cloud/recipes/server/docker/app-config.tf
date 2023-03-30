@@ -24,6 +24,7 @@ module "app-config" {
     ] 
     : [ 
       var.minecraft_server_description,
+      var.minecraft_port,
       var.java_mx_mem,
       var.java_ms_mem
     ]
