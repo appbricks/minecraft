@@ -8,6 +8,8 @@
 #
 # @order: 1
 # @tags: recipe,target-undeployed
+# @value_inclusion_filter: ^[a-zA-Z0-9][-a-zA-Z0-9]*$
+# @value_inclusion_filter_message: The time interval should be a value greater than 0.
 # @target_key: true
 #
 variable "name" {
@@ -86,6 +88,7 @@ variable "minecraft_backup_frequency" {
 # @tags: recipe,target-undeployed
 # @value_inclusion_filter: ^[0-9]+[kmgKMG]$
 # @value_inclusion_filter_message: The heap size must be a positive integer with a suffix (k/m/g) indicating the units.
+# @depends_on: minecraft_type=vanilla|paper|witchcraft-and-wizardry
 #
 variable "java_mx_mem" {
   description = "Java maximum heap size."
@@ -99,6 +102,7 @@ variable "java_mx_mem" {
 # @tags: recipe,target-undeployed
 # @value_inclusion_filter: ^[0-9]+[kmgKMG]$
 # @value_inclusion_filter_message: The heap size must be a positive integer with a suffix (k/m/g) indicating the units.
+# @depends_on: minecraft_type=vanilla|paper|witchcraft-and-wizardry
 #
 variable "java_ms_mem" {
   description = "Java initial and minimum heap size."

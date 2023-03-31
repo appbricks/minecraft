@@ -30,6 +30,14 @@ module "app-config" {
     ]
   )
 
+  app_domain_name = "${var.name}.${var.cb_internal_domain}"
+  app_service_ports = jsonencode([
+    {
+      "name": "server"
+      "port": var.minecraft_type == "bedrock" ? 19132 : var.minecraft_port
+    }
+  ])
+  
   depends_on = [
     data.external.system-env
   ]

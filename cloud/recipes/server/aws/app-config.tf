@@ -15,6 +15,14 @@ module "app-config" {
   app_file_archive = "${path.module}/.minecraft-app-scripts.zip"
   app_install_script_name = "install.sh"
 
+  app_domain_name = "${var.name}.${var.cb_internal_domain}"
+  app_service_ports = jsonencode([
+    {
+      "name": "server"
+      "port": var.minecraft_type == "bedrock" ? 19132 : var.minecraft_port
+    }
+  ])
+
   depends_on = [
     data.archive_file.minecraft-app-scripts
   ]
