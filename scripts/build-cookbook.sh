@@ -21,7 +21,7 @@ fi
 
 cookbook_desc="This cookbook contains recipes to launch self-hosted minecraft servers."
 
-if [[ $cookbook_version == dev ]]; then
+if [[ $cookbook_version == dev* ]]; then
   $build_cookbook \
     --recipe ${root_dir}/cloud/recipes \
     --cookbook-name minecraft \
