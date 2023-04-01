@@ -6,7 +6,7 @@ on:
       version:
         description: Minecraft Bedrock server version
         required: true
-        default: '1.19.70.02'
+        default: '1.19.73.02'
         type: string
 
 jobs:
