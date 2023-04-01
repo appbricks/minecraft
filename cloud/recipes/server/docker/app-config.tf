@@ -30,6 +30,7 @@ module "app-config" {
     ]
   )
 
+  app_description = "Minecraft Server (${var.minecraft_type})"
   app_domain_name = "${var.name}.${var.cb_internal_domain}"
   app_service_ports = jsonencode([
     {

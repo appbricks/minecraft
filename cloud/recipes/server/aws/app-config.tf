@@ -15,6 +15,7 @@ module "app-config" {
   app_file_archive = "${path.module}/.minecraft-app-scripts.zip"
   app_install_script_name = "install.sh"
 
+  app_description = "Minecraft Server (${var.minecraft_type})"
   app_domain_name = "${var.name}.${var.cb_internal_domain}"
   app_service_ports = jsonencode([
     {
