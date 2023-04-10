@@ -34,6 +34,6 @@ resource "docker_image" "minecraft" {
 }
 
 resource "random_id" "minecraft" {
-  prefix      = "mc-"
+  prefix      = "${var.name}-"
   byte_length = 8
 }
