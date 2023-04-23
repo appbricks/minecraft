@@ -183,6 +183,10 @@ variable "cb_internal_domain" {
   default  = "local"
 }
 
+variable "cb_local_state_path" {
+  type = string
+}
+
 # Common local variables
 
 locals {
