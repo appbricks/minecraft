@@ -54,6 +54,15 @@ jobs:
 
   build-cookbook:
     needs: create-release-tag
+
+    strategy:
+      matrix:
+        os: [ linux, darwin, windows ]
+        arch: [ amd64, arm64 ]
+        exclude:
+          - os: windows
+            arch: arm64
+
     runs-on: ubuntu-latest
 
     defaults:
@@ -75,7 +84,7 @@ jobs:
 
     - name: Run build
       run: |
-        scripts/build-cookbook.sh :clean:
+        scripts/build-cookbook.sh :clean: ${{ matrix.os }} ${{ matrix.arch }}
 
     - name: Upload built cookbook
       uses: actions/upload-artifact@master
