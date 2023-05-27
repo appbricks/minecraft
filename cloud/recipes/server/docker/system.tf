@@ -4,52 +4,25 @@
 # running in
 #
 
+data "shell_script" "system-env" {
+  lifecycle_commands {
+    read = "${local.system_env_cli}"
+  }
+} 
+
 locals {
   # directories start with "C:..." on Windows; All other OSs use "/" for root.
-  is_windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
+  is_windows_fs = substr(pathexpand("~"), 0, 1) == "/" ? false : true
 
-  # script file to retrieve local system environment variables
-  env_script = local.is_windows ? "${path.cwd}/.terraform/env.ps1" : "${path.cwd}/.terraform/env.sh"
-}
+  abs_module_path = local.is_windows_fs ? replace(abspath(path.module), "/", "\\") : abspath(path.module)
+  local_state_path = local.is_windows_fs ? replace(var.cb_local_state_path, "/", "\\") : var.cb_local_state_path
 
-# Script to read local system environment
-data "external" "system-env" {
-  program = [ local.env_script ]
-  depends_on = [ local_file.system-env-script ]
-}
-
-resource "local_file" "system-env-script" {
-  content = (local.is_windows 
-      ? <<PS_SCRIPT
-ConvertTo-Json @{
-  ip = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Ethernet).IPAddress
-  global_data_dir= $Env:ProgramData
-  local_data_dir = $Env:LOCALAPPDATA
-}
-PS_SCRIPT
-      : <<SH_SCRIPT
-#!/bin/bash
-cat <<EOF
-{
-  "ip": "$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -1)",
-  "global_data_dir": "/usr/local/var/mycs",
-  "local_data_dir": "$HOME/.mycs"
-}
-EOF
-SH_SCRIPT
-    )
-
-  filename = local.env_script
-}
-
-output "ip" {
-  value = data.external.system-env.result.ip
-}
-
-output "global_data_dir" {
-  value = data.external.system-env.result.global_data_dir
-}
-
-output "local_data_dir" {
-  value = data.external.system-env.result.local_data_dir
+  system_env_cli = local.is_windows_fs ? "${local.abs_module_path}\\system-env.exe" : "${local.abs_module_path}/system-env"
+  
+  is_windows  = data.shell_script.system-env.output.os == "windows"
+  paths_env   = jsondecode(data.shell_script.system-env.output.paths)
+  network_env = jsondecode(data.shell_script.system-env.output.network)
+  tools_env   = jsondecode(data.shell_script.system-env.output.tools)
+  vbox_env    = jsondecode(data.shell_script.system-env.output.vbox)
+  system_msgs = jsondecode(data.shell_script.system-env.output.msgs)
 }

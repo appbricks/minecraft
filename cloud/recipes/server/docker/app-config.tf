@@ -3,7 +3,10 @@
 #
 
 locals {
-  # mycs_app_config_dir = "${data.external.system-env.result.global_data_dir}/minecraft/${var.minecraft_type}_${var.minecraft_version}/etc"
+  mycs_app_config_dir = (local.is_windows
+    ? "${local.paths_env.globalDataDir}\\minecraft\\name"
+    : "${local.paths_env.globalDataDir}/minecraft/name"
+  )
 }
 
 module "app-config" {
@@ -38,8 +41,4 @@ module "app-config" {
       "port": var.minecraft_type == "bedrock" ? 19132 : var.minecraft_port
     }
   ])
-  
-  depends_on = [
-    data.external.system-env
-  ]
 }
