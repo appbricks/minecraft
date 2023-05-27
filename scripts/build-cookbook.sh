@@ -1,4 +1,10 @@
-#!/bin/bash -ex
+#!/bin/bash
+
+action=${1:-:dev:}
+os=${2:-$(go env GOOS)}
+arch=${3:-$(go env GOARCH)}
+
+set -xeuo pipefail
 
 root_dir=$(cd $(dirname $BASH_SOURCE)/.. && pwd)
 
@@ -7,7 +13,7 @@ cookbook_version=${VERSION:-dev}
 cookbook_build_dir=${root_dir}/.build/cookbook
 cookbook_bin_dir=${cookbook_build_dir}/bin
 
-[[ $1 != *:clean:* ]] || rm -fr $cookbook_build_dir
+[[ $action != *:clean:* ]] || rm -fr $cookbook_build_dir
 mkdir -p $cookbook_bin_dir
 
 build_cookbook=${cookbook_bin_dir}/build-cookbook.sh
@@ -21,7 +27,7 @@ fi
 
 cookbook_desc="This cookbook contains recipes to launch self-hosted minecraft servers."
 
-if [[ $cookbook_version == dev* ]]; then
+if [[ $action == *:dev:* ]]; then
   $build_cookbook \
     --recipe ${root_dir}/cloud/recipes \
     --cookbook-name minecraft \
@@ -30,6 +36,7 @@ if [[ $cookbook_version == dev* ]]; then
     --dest-dir "" \
     --template-only \
     --single \
+    --os-name $os --os-arch $arch \
     --verbose
 else
   mycs_app_version=$(aws s3 ls s3://mycsprod-deploy-artifacts/releases/ | sort \
@@ -37,23 +44,15 @@ else
     | awk 'match($0, /[0-9]+\.[0-9]+\.[0-9]+/) { print substr($0, RSTART, RLENGTH) }' \
     | uniq | tail -1)
 
-  for os_name in linux darwin windows; do
-    for os_arch in amd64 arm64; do
-      # build for all os architectures except for for windows/arm64
-      if [[ $os_name != windows || $os_arch == amd64 ]]; then
-        
-        $build_cookbook \
-          --recipe ${root_dir}/cloud/recipes \
-          --cookbook-name minecraft \
-          --cookbook-desc "$cookbook_desc" \
-          --cookbook-version $cookbook_version \
-          --dest-dir "" \
-          --template-only \
-          --single \
-          --env-arg "mycs_app_version=${mycs_app_version}" \
-          --os-name $os_name --os-arch $os_arch \
-          --verbose
-      fi
-    done
-  done
+  $build_cookbook \
+    --recipe ${root_dir}/cloud/recipes \
+    --cookbook-name minecraft \
+    --cookbook-desc "$cookbook_desc" \
+    --cookbook-version $cookbook_version \
+    --dest-dir "" \
+    --template-only \
+    --single \
+    --env-arg "mycs_app_version=${mycs_app_version}" \
+    --os-name $os --os-arch $arch \
+    --verbose
 fi
