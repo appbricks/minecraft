@@ -1,4 +1,4 @@
-name: MyCS Minecraft Cookbook
+name: MyCS Minecraft prod Cookbook
 
 on:
   workflow_dispatch:

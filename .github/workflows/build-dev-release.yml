@@ -1,0 +1,45 @@
+name: MyCS Minecraft dev Cookbook
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ dev ]
+    paths:
+    - 'cloud/**'
+
+jobs:
+ 
+  build-cookbook:
+    strategy:
+      matrix:
+        os: [ linux, darwin, windows ]
+        arch: [ amd64, arm64 ]
+        exclude:
+          - os: windows
+            arch: arm64
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    env:
+      AWS_EC2_METADATA_DISABLED: true      
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Run build
+      run: |
+        VERSION="dev.$(date -u '+%y%m%d%H%M%S')" scripts/build-cookbook.sh :dev:clean: ${{ matrix.os }} ${{ matrix.arch }}
+
+    - name:  Upload dev binaries to S3
+      run: |
+        mkdir releases
+        cp -r .build/cookbook/dist/*.zip releases/
+        aws s3 sync releases s3://mycsdev-deploy-artifacts/cookbooks/minecraft --acl public-read
