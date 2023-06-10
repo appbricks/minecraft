@@ -1,3 +1,6 @@
 .*
 map.zip
 tmp/
+
+# downloaded recipe binaries
+system-env
